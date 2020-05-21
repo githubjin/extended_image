@@ -306,6 +306,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     });
   }
 
+  bool get isCropCircle => _editActionDetails.cropShapeType == CropShapeType.circle;
+
   void cropCircle() {
     setState(() {
       _editActionDetails.cropShapeType = CropShapeType.circle;
