@@ -21,7 +21,9 @@ class MyApp extends StatelessWidget {
       }
     });
   }
+
   final TuChongRepository listSourceRepository = TuChongRepository();
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -110,5 +112,6 @@ class MyApp extends StatelessWidget {
 }
 
 String _imageTestUrl;
+
 String get imageTestUrl =>
     _imageTestUrl ?? 'https://photo.tuchong.com/4870004/f/298584322.jpg';

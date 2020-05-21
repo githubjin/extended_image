@@ -40,6 +40,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   ];
   AspectRatioItem _aspectRatio;
   bool _cropping = false;
+  bool _circle = false;
+
   @override
   void initState() {
     _aspectRatio = _aspectRatios.first;
@@ -82,7 +84,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       cropRectPadding: const EdgeInsets.all(20.0),
                       hitTestSize: 20.0,
                       initCropRectType: InitCropRectType.imageRect,
-                      cropAspectRatio: _aspectRatio.value);
+                      cropAspectRatio: _aspectRatio.value,
+                      cropShapeType: CropShapeType.circle);
                 },
               )
             : ExtendedImage.asset(
@@ -97,7 +100,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       cropRectPadding: const EdgeInsets.all(20.0),
                       hitTestSize: 20.0,
                       initCropRectType: InitCropRectType.imageRect,
-                      cropAspectRatio: _aspectRatio.value);
+                      cropAspectRatio: _aspectRatio.value,
+                      cropShapeType: CropShapeType.circle);
                 },
               ),
       ),
@@ -199,6 +203,22 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 textColor: Colors.white,
                 onPressed: () {
                   editorKey.currentState.reset();
+                },
+              ),
+              FlatButtonWithIcon(
+                icon: Icon(Icons.format_shapes),
+                label: const Text(
+                  'Shape',
+                  style: TextStyle(fontSize: 10.0),
+                ),
+                textColor: Colors.white,
+                onPressed: () {
+                  if (_circle) {
+                    editorKey.currentState.cropRect();
+                  } else {
+                    editorKey.currentState.cropCircle();
+                  }
+                  _circle = !_circle;
                 },
               ),
             ],
@@ -338,8 +358,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
       /// native library
       if (useNative) {
-        fileData =
-            Uint8List.fromList(await cropImageDataWithNativeLibrary(state: editorKey.currentState));
+        fileData = Uint8List.fromList(await cropImageDataWithNativeLibrary(
+            state: editorKey.currentState));
       } else {
         ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
         ///it will block showBusyingDialog
@@ -347,8 +367,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         //await Future.delayed(Duration(milliseconds: 200));
 
         ///if you don't want to block ui, use compute/isolate,but it costs more time.
-        fileData =
-             Uint8List.fromList(await cropImageDataWithDartLibrary(state: editorKey.currentState));
+        fileData = Uint8List.fromList(
+            await cropImageDataWithDartLibrary(state: editorKey.currentState));
       }
       final String fileFath =
           await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
@@ -366,6 +386,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   }
 
   Uint8List _memoryImage;
+
   Future<void> _getImage() async {
     _memoryImage = await pickImage();
     setState(() {

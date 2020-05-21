@@ -4,6 +4,7 @@
 // **************************************************************************
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library_route.dart';
 import 'pages/custom_image_demo.dart';
@@ -72,9 +73,9 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
     case 'fluttercandies://picswiper':
       return RouteResult(
         widget: PicSwiper(
-          index: arguments['index'],
-          pics: arguments['pics'],
-          tuChongItem: arguments['tuChongItem'],
+          index: arguments['index'] as int,
+          pics: arguments['pics'] as List<PicSwiperItem>,
+          tuChongItem: arguments['tuChongItem'] as TuChongItem,
         ),
         showStatusBar: false,
         routeName: 'PicSwiper',
@@ -118,7 +119,7 @@ class RouteResult {
 
 enum PageRouteType { material, cupertino, transparent }
 
-const List<String> routeNames = <String>[
+List<String> routeNames = <String>[
   'fluttercandies://WaterfallFlowDemo',
   'fluttercandies://customimage',
   'fluttercandies://image',

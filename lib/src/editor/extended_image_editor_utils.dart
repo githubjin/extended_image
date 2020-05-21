@@ -21,6 +21,8 @@ class EditActionDetails {
   Offset screenFocalPoint;
   EdgeInsets cropRectPadding;
   Rect cropRect;
+  /// crop shape type
+  CropShapeType cropShapeType;
 
   /// aspect ratio of image
   double originalAspectRatio;
@@ -348,7 +350,8 @@ class EditorConfig {
       this.animationDuration = const Duration(milliseconds: 200),
       this.tickerDuration = const Duration(milliseconds: 400),
       this.cropAspectRatio = CropAspectRatios.custom,
-      this.initCropRectType = InitCropRectType.imageRect})
+      this.initCropRectType = InitCropRectType.imageRect,
+        this.cropShapeType = CropShapeType.rect})
       : maxScale = maxScale ??= 5.0,
         // initialScale = initialScale ??= 1.0,
         // assert(minScale <= maxScale),
@@ -403,6 +406,9 @@ class EditorConfig {
 
   /// init crop rect base on initial image rect or image layout rect
   final InitCropRectType initCropRectType;
+
+  /// init crop shape type rect or circle
+  final CropShapeType cropShapeType;
 }
 
 class CropAspectRatios {
@@ -505,4 +511,11 @@ enum InitCropRectType {
   imageRect,
   //init crop rect base on image layout rect
   layoutRect
+}
+
+enum CropShapeType {
+  // crop rect shape
+  rect,
+  /// crop circle shape
+  circle
 }

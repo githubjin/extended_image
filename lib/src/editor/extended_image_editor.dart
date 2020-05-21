@@ -58,6 +58,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
         ..delta = Offset.zero
         ..totalScale = _editorConfig.initialScale
         ..preTotalScale = _editorConfig.initialScale
+        ..cropShapeType = _editorConfig.cropShapeType
         ..cropRectPadding = _editorConfig.cropRectPadding;
     }
 
@@ -302,6 +303,18 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   void flip() {
     setState(() {
       _editActionDetails.flip();
+    });
+  }
+
+  void cropCircle() {
+    setState(() {
+      _editActionDetails.cropShapeType = CropShapeType.circle;
+    });
+  }
+
+  void cropRect() {
+    setState(() {
+      _editActionDetails.cropShapeType = CropShapeType.rect;
     });
   }
 

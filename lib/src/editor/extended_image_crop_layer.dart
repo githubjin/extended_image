@@ -105,7 +105,8 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
               Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
           lineHeight: editConfig.lineHeight,
           maskColor: maskColor,
-          pointerDown: _pointerDown),
+          pointerDown: _pointerDown,
+          cropShapeType: widget.editActionDetails.cropShapeType),
       child: Stack(
         children: <Widget>[
           //top left
@@ -550,7 +551,8 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
       this.cornerSize,
       this.lineHeight,
       this.maskColor,
-      this.pointerDown});
+      this.pointerDown,
+        this.cropShapeType = CropShapeType.rect});
 
   final Rect cropRect;
   //size of corner shape
@@ -572,8 +574,77 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
   //whether pointer is down
   final bool pointerDown;
 
+  // crop shape type
+  final CropShapeType cropShapeType;
+
+  bool get cropCircle => cropShapeType == CropShapeType.circle;
+
+  void paintCircle(Canvas canvas, Size size) {
+    double centerX = size.width / 2;
+    double centerY = size.height / 2;
+    var radius = cropRect.width / 2;
+    ///
+    canvas.save();
+    ///
+    Path path = Path();
+    path
+      ..moveTo(centerX - radius, centerY)
+      ..arcToPoint(Offset(centerX + radius, centerY),
+          clockwise: true, radius: Radius.circular(radius))
+      ..lineTo(size.width, centerY)
+      ..lineTo(size.width, 0)
+      ..lineTo(0, 0)
+      ..lineTo(0, centerY)
+      ..lineTo(centerX - radius, centerY)
+      ..arcToPoint(Offset(centerX + radius, centerY),
+          clockwise: false, radius: Radius.circular(radius))
+      ..lineTo(size.width, centerY)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..lineTo(0, centerY);
+    canvas.clipPath(path);
+    final Rect fullRect = Offset.zero & size;
+    canvas.drawRect(fullRect, Paint()..color = maskColor);
+    canvas.restore();
+    final Paint linePainter = Paint()
+      ..color = lineColor
+      ..strokeWidth = lineHeight
+      ..style = PaintingStyle.stroke;
+    drawPainDownInCircle(canvas, size, linePainter, centerX, centerY, radius);
+    canvas.drawCircle(
+        Offset(centerX, centerY),
+        radius,
+        Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2);
+  }
+
+  void drawPainDownInCircle(Canvas canvas, Size size, Paint linePainter, double centerX, double centerY, double radius) {
+    if (!pointerDown) {
+      return;
+    }
+    double distance = sqrt(radius * radius * 8 / 9);
+    double leftX = centerX - radius / 3;
+    double rightX = centerX + radius / 3;
+    double topY = centerY - distance;
+    double bottomY = centerY + distance;
+    canvas.drawLine(Offset(leftX, topY), Offset(leftX, bottomY), linePainter);
+    canvas.drawLine(Offset(rightX, topY), Offset(rightX, bottomY), linePainter);
+    double hleftX = centerX - distance;
+    double hRightX = centerX + distance;
+    double htopY = centerY - radius / 3;
+    double hbottomY = centerY + radius / 3;
+    canvas.drawLine(Offset(hleftX, htopY), Offset(hRightX, htopY), linePainter);
+    canvas.drawLine(Offset(hleftX, hbottomY), Offset(hRightX, hbottomY), linePainter);
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
+    if(cropCircle) {
+      paintCircle(canvas, size);
+      return;
+    }
     final Rect rect = Offset.zero & size;
     final Paint linePainter = Paint()
       ..color = lineColor
