@@ -44,7 +44,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
   @override
   void initState() {
-    _aspectRatio = _aspectRatios.first;
+    _aspectRatio = _aspectRatios[2];
     super.initState();
   }
 
