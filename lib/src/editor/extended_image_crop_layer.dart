@@ -580,9 +580,12 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
   bool get cropCircle => cropShapeType == CropShapeType.circle;
 
   void paintCircle(Canvas canvas, Size size) {
-    double centerX = size.width / 2;
-    double centerY = size.height / 2;
-    var radius = cropRect.width / 2;
+//    double centerX = size.width / 2;
+//    double centerY = size.height / 2;
+//    var radius = cropRect.width / 2;
+    var radius = (cropRect.right - cropRect.left) / 2;
+    double centerX = cropRect.left + radius;
+    double centerY = cropRect.top + radius;
     ///
     canvas.save();
     ///

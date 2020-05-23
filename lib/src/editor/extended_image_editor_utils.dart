@@ -24,6 +24,8 @@ class EditActionDetails {
   /// crop shape type
   CropShapeType cropShapeType;
 
+  bool get cropCircle => cropShapeType == CropShapeType.circle;
+
   /// aspect ratio of image
   double originalAspectRatio;
 
