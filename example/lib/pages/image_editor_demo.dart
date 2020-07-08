@@ -352,7 +352,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     try {
       _cropping = true;
 
-      await showBusyingDialog();
+      //await showBusyingDialog();
 
       Uint8List fileData;
 
@@ -380,7 +380,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
       print(msg);
     }
 
-    Navigator.of(context).pop();
+    //Navigator.of(context).pop();
     showToast(msg);
     _cropping = false;
   }
@@ -388,41 +388,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   Uint8List _memoryImage;
 
   Future<void> _getImage() async {
-    _memoryImage = await pickImage();
+    _memoryImage = await pickImage(context);
     setState(() {
       editorKey.currentState.reset();
     });
-  }
-
-  Future<void> showBusyingDialog() async {
-    final Color primaryColor = Theme.of(context).primaryColor;
-    return showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext c) {
-          return Material(
-            color: Colors.transparent,
-            child: Container(
-              height: double.infinity,
-              width: double.infinity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CircularProgressIndicator(
-                    strokeWidth: 2.0,
-                    valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-                  ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  Text(
-                    'cropping...',
-                    style: TextStyle(color: primaryColor),
-                  )
-                ],
-              ),
-            ),
-          );
-        });
   }
 }
