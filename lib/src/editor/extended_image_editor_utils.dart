@@ -15,6 +15,10 @@ class EditActionDetails {
   Rect _screenDestinationRect;
   Rect _rawDestinationRect;
 
+  /// #235
+  /// when we reach edge, we should not allow to zoom out.
+  bool _reachCropRectEdge = false;
+
   double totalScale = 1.0;
   double preTotalScale = 1.0;
   Offset delta;
@@ -79,6 +83,8 @@ class EditActionDetails {
   Rect get rawDestinationRect => _rawDestinationRect;
 
   Rect get screenCropRect => cropRect?.shift(layoutTopLeft);
+
+  bool get reachCropRectEdge => _reachCropRectEdge;
 
   void rotate(double angle, Rect layoutRect, BoxFit fit) {
     _rotateRadian += angle;
@@ -200,6 +206,8 @@ class EditActionDetails {
   }
 
   Rect getFinalDestinationRect() {
+    _reachCropRectEdge = false;
+
     if (screenDestinationRect != null) {
       /// scale
       final double scaleDelta = totalScale / preTotalScale;
@@ -251,7 +259,7 @@ class EditActionDetails {
       _screenDestinationRect =
           computeBoundary(_screenDestinationRect, screenCropRect);
 
-      ///make sure that crop rect is all in image rect.
+      // make sure that crop rect is all in image rect.
       if (screenCropRect != null) {
         Rect rect = screenCropRect.expandToInclude(_screenDestinationRect);
         if (rect != _screenDestinationRect) {
@@ -261,7 +269,7 @@ class EditActionDetails {
               doubleEqual(rect.bottom, screenCropRect.bottom);
           final bool rightSame = doubleEqual(rect.right, screenCropRect.right);
 
-          ///make sure that image rect keep  same aspect ratio
+          // make sure that image rect keep same aspect ratio
           if (topSame && bottomSame) {
             rect = Rect.fromCenter(
                 center: rect.center,
@@ -269,6 +277,7 @@ class EditActionDetails {
                     _screenDestinationRect.height *
                     _screenDestinationRect.width,
                 height: rect.height);
+            _reachCropRectEdge = true;
           } else if (leftSame && rightSame) {
             rect = Rect.fromCenter(
               center: rect.center,
@@ -277,6 +286,7 @@ class EditActionDetails {
                   _screenDestinationRect.width *
                   _screenDestinationRect.height,
             );
+            _reachCropRectEdge = true;
           }
           totalScale = totalScale / (rect.width / _screenDestinationRect.width);
           preTotalScale = totalScale;
